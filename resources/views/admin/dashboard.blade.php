@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <!-- Staff Performance -->
+            <!-- Cashier Performance -->
             <div class="card border-0 rounded-4 shadow-sm mb-4" style="background-color: #EAE5D9;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center gap-3 mb-4">
@@ -30,38 +30,99 @@
                             style="width:40px;height:40px;">
                             <i class="bi bi-people-fill"></i>
                         </div>
-                        <h4 class="fw-bold m-0">Performa Staff</h4>
+                        <h4 class="fw-bold m-0">Performa Kasir</h4>
                     </div>
 
                     <table class="table table-borderless text-dark">
                         <thead>
                             <tr class="text-secondary fw-bold" style="border-bottom: 1px solid #999;">
-                                <th class="pb-3">Nama</th>
-                                <th class="pb-3">Shift</th>
-                                <th class="pb-3">Status</th>
-                                <th class="pb-3 text-end">Total Order</th>
+                                <th class="pb-3" style="width: 35%;">Nama</th>
+                                <th class="pb-3" style="width: 20%;">Shift</th>
+                                <th class="pb-3" style="width: 25%;">Status</th>
+                                <th class="pb-3" style="width: 20%;">Total Order</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($topStaff as $staff)
+                            @forelse($topCashiers as $cashier)
                                 <tr style="border-bottom: 1px solid #ccc;">
-                                    <td class="py-3">{{ $staff->name }}</td>
-                                    <td class="py-3 text-secondary">Pagi</td>
-                                    <td class="py-3 text-secondary">Selesai</td>
-                                    <td class="py-3 text-end fw-bold">{{ $staff->orders_count }}</td>
+                                    <td class="py-3">{{ $cashier->name }}</td>
+                                    <td class="py-3 text-secondary">
+                                        @php
+                                            $loginTime = $cashier->last_login_at;
+                                            $shift = '-';
+                                            if($loginTime) {
+                                                $hour = $loginTime->hour;
+                                                if($hour >= 5 && $hour < 12) $shift = 'Pagi';
+                                                elseif($hour >= 12 && $hour < 18) $shift = 'Siang';
+                                                else $shift = 'Malam';
+                                            }
+                                        @endphp
+                                        {{ $shift }}
+                                    </td>
+                                    <td class="py-3 text-secondary">
+                                        {{ $cashier->last_login_at ? ($cashier->last_logout_at ? 'Selesai' : 'Masih Bertugas') : '-' }}
+                                    </td>
+                                    <td class="py-3 fw-bold">{{ $cashier->orders_count }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-3">No data available</td>
+                                    <td colspan="3" class="text-center py-3">No data available</td>
                                 </tr>
                             @endforelse
-                            <!-- Dummy Rows to fill table -->
-                            <tr style="border-bottom: 1px solid #ccc;">
-                                <td class="py-3">Veny Etika</td>
-                                <td class="py-3 text-secondary">Malam</td>
-                                <td class="py-3 text-secondary">Bertugas</td>
-                                <td class="py-3 text-end fw-bold">12</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Manager Attendance -->
+            <div class="card border-0 rounded-4 shadow-sm mb-4" style="background-color: #EAE5D9;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="bg-dark rounded-circle text-white d-flex align-items-center justify-content-center"
+                            style="width:40px;height:40px;">
+                            <i class="bi bi-person-badge-fill"></i>
+                        </div>
+                        <h4 class="fw-bold m-0">Kehadiran Manager</h4>
+                    </div>
+
+                    <table class="table table-borderless text-dark">
+                        <thead>
+                            <tr class="text-secondary fw-bold" style="border-bottom: 1px solid #999;">
+                                <th class="pb-3" style="width: 35%;">Nama</th>
+                                <th class="pb-3" style="width: 20%;">Shift</th>
+                                <th class="pb-3" style="width: 25%;">Online</th>
+                                <th class="pb-3" style="width: 20%;">Offline</th>
                             </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($managerStats as $manager)
+                                <tr style="border-bottom: 1px solid #ccc;">
+                                    <td class="py-3">{{ $manager->name }}</td>
+                                    <td class="py-3 text-secondary">
+                                        @php
+                                            $loginTime = $manager->last_login_at;
+                                            $shift = '-';
+                                            if($loginTime) {
+                                                $hour = $loginTime->hour;
+                                                if($hour >= 5 && $hour < 12) $shift = 'Pagi';
+                                                elseif($hour >= 12 && $hour < 18) $shift = 'Siang';
+                                                else $shift = 'Malam';
+                                            }
+                                        @endphp
+                                        {{ $shift }}
+                                    </td>
+                                    <td class="py-3 text-secondary">
+                                        {{ $manager->last_login_at ? $manager->last_login_at->format('H:i') : '-' }}
+                                    </td>
+                                    <td class="py-3 text-secondary">
+                                        {{ $manager->last_logout_at ? $manager->last_logout_at->format('H:i') : '-' }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-3">No managers found</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -197,22 +258,20 @@
                     backgroundColor: 'rgba(62, 60, 56, 0.1)',
                     tension: 0.4,
                     fill: true,
-                    pointRadius: 0,
-                    pointHoverRadius: 0
+                    pointRadius: 3,
+                    pointHoverRadius: 5
                 }]
             },
             options: {
                 animation: false,
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: false }
+                    tooltip: { enabled: true }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 100,
-                        grid: { color: '#BDAFA1', borderDash: [5, 5] },
-                        ticks: { stepSize: 20 }
+                        grid: { color: '#BDAFA1', borderDash: [5, 5] }
                     },
                     x: { grid: { display: false } }
                 },

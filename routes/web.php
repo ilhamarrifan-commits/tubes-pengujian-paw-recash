@@ -25,6 +25,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('staff', AdminStaffController::class);
     Route::get('/sales', [AdminReportController::class, 'sales'])->name('sales');
     Route::get('/history', [AdminReportController::class, 'history'])->name('history');
+    Route::post('/history/bulk-delete', [AdminReportController::class, 'bulkDelete'])->name('history.bulkDelete');
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile');
 });
 

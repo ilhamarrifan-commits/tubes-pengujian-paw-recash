@@ -23,6 +23,9 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
+            $user->update([
+                'last_login_at' => now(),
+            ]);
 
             if ($user->role === 'admin') {
                 return redirect()->intended(route('admin.dashboard'));
@@ -42,6 +45,11 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        if ($user) {
+            $user->update(['last_logout_at' => now()]);
+        }
+
         Auth::logout();
 
         $request->session()->invalidate();

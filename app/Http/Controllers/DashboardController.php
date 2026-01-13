@@ -22,8 +22,9 @@ class DashboardController extends Controller
         $totalOrdersMonth = Order::whereMonth('created_at', $today->month)->whereYear('created_at', $today->year)->count();
         $totalRefundsMonth = Order::whereMonth('created_at', $today->month)->whereYear('created_at', $today->year)->where('payment_status', 'refunded')->sum('total_amount');
 
-        // Simple Staff Performance (Top 3 by order count this month of selected date)
-        $topStaff = User::whereIn('role', ['cashier', 'manager']) // Include manager if they sell?
+        // Separated Staff Performance
+        $topCashiers = User::where('role', 'cashier')
+            ->select('id', 'name', 'last_login_at', 'last_logout_at')
             ->withCount([
                 'orders' => function ($query) use ($today) {
                     $query->whereMonth('created_at', $today->month)->whereYear('created_at', $today->year);
@@ -31,6 +32,10 @@ class DashboardController extends Controller
             ])
             ->orderByDesc('orders_count')
             ->take(3)
+            ->get();
+
+        $managerStats = User::where('role', 'manager')
+            ->select('id', 'name', 'last_login_at', 'last_logout_at')
             ->get();
 
 
@@ -73,7 +78,8 @@ class DashboardController extends Controller
             'totalSalesMonth',
             'totalOrdersMonth',
             'totalRefundsMonth',
-            'topStaff',
+            'topCashiers',
+            'managerStats',
             'chartLabels',
             'chartData',
             'dateLabel',

@@ -153,4 +153,19 @@ class AdminReportController extends Controller
 
         return view('admin.reports.history', compact('orders'));
     }
+
+    public function bulkDelete(Request $request)
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $ids = $request->input('ids');
+        if (is_array($ids) && count($ids) > 0) {
+            Order::whereIn('id', $ids)->delete();
+            return redirect()->back()->with('success', count($ids) . ' history records deleted successfully.');
+        }
+
+        return redirect()->back()->with('error', 'No records selected for deletion.');
+    }
 }

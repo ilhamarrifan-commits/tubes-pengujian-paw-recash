@@ -129,7 +129,7 @@
                         backgroundColor: 'rgba(62, 60, 56, 0.1)',
                         tension: 0.4,
                         fill: true,
-                        pointRadius: 0,
+                        pointRadius: 3,
                     }]
                 },
                 options: {
@@ -139,9 +139,6 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            min: 0,
-                            max: 80,
-                            ticks: { stepSize: 20 },
                             grid: { color: '#BDAFA1', borderDash: [5, 5] }
                         },
                         x: { grid: { display: false } }
@@ -170,14 +167,11 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            min: 0,
-                            max: 10000000,
                             ticks: {
-                                stepSize: 1000000,
                                 callback: function (value, index, values) {
                                     if (value === 0) return '0';
-                                    if (value === 500000) return 'Rp 500rb';
                                     if (value >= 1000000) return 'Rp ' + (value / 1000000) + ' Jt';
+                                    if (value >= 1000) return 'Rp ' + (value / 1000) + 'rb';
                                     return 'Rp ' + value;
                                 }
                             }
@@ -220,9 +214,6 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            min: 0,
-                            max: 100,
-                            ticks: { stepSize: 20 }
                         }
                     }
                 }
@@ -249,15 +240,12 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            min: 0,
-                            max: 500000,
                             ticks: {
-                                stepSize: 50000,
                                 callback: function (value, index, values) {
                                     if (value === 0) return '0';
-                                    if (value === 50000) return 'Rp 50rb';
-                                    if (value % 100000 === 0) return 'Rp ' + (value / 1000) + 'rb';
-                                    return '';
+                                    if (value >= 1000000) return 'Rp ' + (value / 1000000) + ' Jt';
+                                    if (value >= 1000) return 'Rp ' + (value / 1000) + 'rb';
+                                    return 'Rp ' + value;
                                 }
                             }
                         }
