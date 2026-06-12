@@ -1,0 +1,3 @@
+BASE_URL = "http://127.0.0.1:8000"
+KASIR_EMAIL = "ilham12@gmail.com"
+KASIR_PASSWORD = "12345678"
